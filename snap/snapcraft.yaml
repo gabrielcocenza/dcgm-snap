@@ -1,11 +1,12 @@
 name: dcgm-exporter
 base: core24
-version: '0.1'
-summary: Snap for dcgm-exporter
+summary: Snap for dcgm-exporter and dcgm
+license: MIT
+contact: solutions-engineering@lists.canonical.com
 description: |
-  This is a test snap for dcgm-exporter
-
-grade: devel
+  This snap includes Nvidia dcgm that provides GPU monitoring and dcgm-exporter to forward metrics
+  to prometheus.
+grade: stable
 confinement: strict
 
 package-repositories:
