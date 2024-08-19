@@ -1,0 +1,50 @@
+name: dcgm-exporter
+base: core24
+version: '0.1'
+summary: Snap for dcgm-exporter
+description: |
+  This is a test snap for dcgm-exporter
+
+grade: devel
+confinement: strict
+
+package-repositories:
+  - type: apt
+    path: /
+    formats: [deb]
+    key-id: EB693B3035CD5710E231E123A4B469963BF863CC
+    url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64
+
+apps:
+  dcgm-exporter:
+    command: bin/dcgm-exporter -f $SNAP/etc/dcgm-exporter/default-counters.csv
+    plugs:
+      - network-bind
+      - opengl
+  dcgmi:
+    command: usr/bin/dcgmi
+    plugs:
+      - opengl
+  dcgm:
+    command: usr/bin/nv-hostengine -n --service-account nvidia-dcgm -p 8888
+    plugs:
+      - network-bind
+      - opengl
+    daemon: simple
+    restart-condition: on-abort
+    environment:
+      DCGM_HOME_DIR: "${SNAP_DATA}/nvidia-dcgm"
+
+parts:
+  dcgm-exporter:
+    plugin: go
+    stage-packages: [datacenter-gpu-manager]
+    build-snaps:
+      - go
+    source: https://github.com/NVIDIA/dcgm-exporter.git
+    source-type: git
+    override-build: |
+      snapcraftctl build
+      mkdir -p $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter
+      cp etc/default-counters.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/default-counters.csv
+      cp etc/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/dcp-metrics-included.csv

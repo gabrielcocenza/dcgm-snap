@@ -1,0 +1,4 @@
+#!/bin/sh -eux
+
+# Make initial directories
+mkdir -p "${SNAP_DATA}/nvidia-dcgm"
