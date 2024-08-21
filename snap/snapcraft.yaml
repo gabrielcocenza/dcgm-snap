@@ -1,11 +1,11 @@
-name: dcgm-exporter
+name: dcgm
 base: core24
-summary: Snap for dcgm-exporter and dcgm
-license: MIT
+version: 1.0
+summary: Snap for NVIDIA dcgm and dcgm-exporter
+license: Apache-2.0
 contact: solutions-engineering@lists.canonical.com
 description: |
-  This snap includes Nvidia dcgm that provides GPU monitoring and dcgm-exporter to forward metrics
-  to prometheus.
+  This snap includes NVIDIA dcgm and dcgm-exporter to provide GPU monitoring via Prometheus metrics.
 grade: stable
 confinement: strict
 
@@ -18,7 +18,7 @@ package-repositories:
 
 apps:
   dcgm-exporter:
-    command: bin/dcgm-exporter -f $SNAP/etc/dcgm-exporter/default-counters.csv
+    command: bin/dcgm-exporter -f $SNAP/etc/dcgm-exporter/dcp-metrics-included.csv
     plugs:
       - network-bind
       - opengl
@@ -26,7 +26,7 @@ apps:
     command: usr/bin/dcgmi
     plugs:
       - opengl
-  dcgm:
+  nv-hostengine:
     command: usr/bin/nv-hostengine -n --service-account nvidia-dcgm -p 8888
     plugs:
       - network-bind
@@ -45,7 +45,6 @@ parts:
     source: https://github.com/NVIDIA/dcgm-exporter.git
     source-type: git
     override-build: |
-      snapcraftctl build
+      craftctl default
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter
-      cp etc/default-counters.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/default-counters.csv
-      cp etc/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/dcp-metrics-included.csv
+      cp ${SNAPCRAFT_PROJECT_DIR}/config/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/dcp-metrics-included.csv

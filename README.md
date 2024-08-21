@@ -1,9 +1,9 @@
 # dcgm-snap
 
-This is the snap package to delivery dcgm pacakge.
-The snap consists of [dcgm-exporter](https://github.com/NVIDIA/dcgm-exporter) and [dcgm](https://developer.nvidia.com/dcgm).
+This is a snap delivering NVIDIA dcgm components.
+The snap consists of [dcgm](https://developer.nvidia.com/dcgm) and [dcgm-exporter](https://github.com/NVIDIA/dcgm-exporter).
 
-## Build Charmed OpenStack Exporter
+## Build the snap
 
 You can build the snap locally by using the command:
 

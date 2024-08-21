@@ -1,4 +1,10 @@
 #!/bin/sh -eux
 
-# Make initial directories
+# Create directory to store dcgm logs.
 mkdir -p "${SNAP_DATA}/nvidia-dcgm"
+
+# # Create directory tp store custom metric files.
+# mkdir -p "${SNAP_DATA}/dcgm-exporter"
+
+# # Copy metric file to target directory.
+# cp ${SNAPCRAFT_PROJECT_DIR}/config/default-counters.csv ${SNAP_DATA}/dcgm-exporter/default-counters.csv
