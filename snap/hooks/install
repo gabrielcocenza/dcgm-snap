@@ -1,4 +1,0 @@
-#!/bin/sh -eux
-
-# Create directory to store dcgm logs.
-mkdir -p "${SNAP_DATA}/nvidia-dcgm"
