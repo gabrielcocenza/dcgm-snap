@@ -16,8 +16,6 @@ DCGM_FI_DEV_GPU_TEMP,    gauge, GPU temperature (in C).
 DCGM_FI_DEV_POWER_USAGE,              gauge, Power draw (in W).
 DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION, counter, Total energy consumption since boot (in mJ).
 
-# Fan speed
-DCGM_FI_DEV_FAN_SPEED, gauge, Fan speed for the device in percent 0-100.
 
 # PCIE
 # DCGM_FI_PROF_PCIE_TX_BYTES,  counter, Total number of bytes transmitted through PCIe TX via NVML.
@@ -92,3 +90,7 @@ DCGM_FI_PROF_DRAM_ACTIVE,        gauge, Ratio of cycles the device memory interf
 # DCGM_FI_PROF_PIPE_FP16_ACTIVE,   gauge, Ratio of cycles the fp16 pipes are active.
 DCGM_FI_PROF_PCIE_TX_BYTES,      gauge, The rate of data transmitted over the PCIe bus - including both protocol headers and data payloads - in bytes per second.
 DCGM_FI_PROF_PCIE_RX_BYTES,      gauge, The rate of data received over the PCIe bus - including both protocol headers and data payloads - in bytes per second.
+
+# Custom metrics
+# Fan speed
+DCGM_FI_DEV_FAN_SPEED, gauge, Fan speed for the device in percent 0-100.

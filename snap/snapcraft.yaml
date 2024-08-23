@@ -1,11 +1,11 @@
 name: dcgm
 base: core24
 adopt-info: dcgm-exporter
-summary: Snap for NVIDIA dcgm and dcgm-exporter
+summary: Snap for NVIDIA DCGM and DCGM exporter
 license: Apache-2.0
 contact: solutions-engineering@lists.canonical.com
 description: |
-  This snap includes NVIDIA dcgm and dcgm-exporter to provide GPU monitoring via Prometheus metrics.
+  This snap includes NVIDIA DCGM and DCGM exporter to provide GPU monitoring via Prometheus metrics.
 platforms:
   amd64:
     build-on: [amd64]
@@ -15,7 +15,7 @@ confinement: strict
 source-code: https://github.com/canonical/dcgm-snap
 issues: https://github.com/canonical/dcgm-snap/issues
 icon: snap/gui/nvidia-logo-vert.png
-title: NVIDIA dcgm
+title: NVIDIA DCGM
 
 package-repositories:
   - type: apt
@@ -35,7 +35,7 @@ apps:
     plugs:
       - opengl
   nv-hostengine:
-    command: usr/bin/nv-hostengine -n --service-account "$SNAP_NV_HOSTENGINE_PORT"
+    command: run_nv_hostengine.sh
     plugs:
       - network-bind
       - opengl
@@ -51,6 +51,12 @@ apps:
     command: usr/bin/dcgmproftester12
 
 parts:
+  wrapper:
+    plugin: dump
+    source: snap/local
+    override-build: |
+      craftctl default
+      chmod +x run_nv_hostengine.sh
   dcgm-exporter:
     plugin: go
     stage-packages: [datacenter-gpu-manager]

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Retrieve the configured port
+PORT=$(snapctl get nv-hostengine-port)
+PORT_FILE="$SNAP_DATA/dcgm_port"
+
+# Update the port in the file
+echo "$PORT" > "$PORT_FILE"
+
+# Restart the service to apply the new configuration
+snapctl restart dcgm.nv-hostengine
