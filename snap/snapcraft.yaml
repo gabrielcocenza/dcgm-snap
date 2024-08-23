@@ -14,7 +14,6 @@ grade: stable
 confinement: strict
 source-code: https://github.com/canonical/dcgm-snap
 issues: https://github.com/canonical/dcgm-snap/issues
-icon: snap/gui/nvidia-logo-vert.png
 title: NVIDIA DCGM
 
 package-repositories:

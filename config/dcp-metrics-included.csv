@@ -2,7 +2,6 @@
 # If line starts with a '#' it is considered a comment
 # DCGM FIELD, Prometheus metric type, help message
 # This is the default metric config file from the dcgm-exporter repo: https://github.com/NVIDIA/dcgm-exporter
-# Additionally, some custom metrics have been added.
 
 # Clocks
 DCGM_FI_DEV_SM_CLOCK,  gauge, SM clock frequency (in MHz).
@@ -90,7 +89,3 @@ DCGM_FI_PROF_DRAM_ACTIVE,        gauge, Ratio of cycles the device memory interf
 # DCGM_FI_PROF_PIPE_FP16_ACTIVE,   gauge, Ratio of cycles the fp16 pipes are active.
 DCGM_FI_PROF_PCIE_TX_BYTES,      gauge, The rate of data transmitted over the PCIe bus - including both protocol headers and data payloads - in bytes per second.
 DCGM_FI_PROF_PCIE_RX_BYTES,      gauge, The rate of data received over the PCIe bus - including both protocol headers and data payloads - in bytes per second.
-
-# Custom metrics
-# Fan speed
-DCGM_FI_DEV_FAN_SPEED, gauge, Fan speed for the device in percent 0-100.
