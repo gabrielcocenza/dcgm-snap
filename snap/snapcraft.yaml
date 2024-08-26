@@ -67,8 +67,7 @@ parts:
     override-build: |
       craftctl default
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter
-      cp etc/default-counters.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/default-counters.csv
-      cp etc/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/dcp-metrics-included.csv
+      cp etc/default-counters.csv etc/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/
     # override prime to set version
     override-prime: |
       craftctl default
