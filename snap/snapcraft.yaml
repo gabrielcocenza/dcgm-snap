@@ -25,7 +25,7 @@ package-repositories:
 
 apps:
   dcgm-exporter:
-    command: bin/dcgm-exporter -f $SNAP/etc/dcgm-exporter/dcp-metrics-included.csv
+    command: bin/dcgm-exporter
     plugs:
       - network-bind
       - opengl
@@ -67,7 +67,8 @@ parts:
     override-build: |
       craftctl default
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter
-      cp ${SNAPCRAFT_PROJECT_DIR}/config/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/dcp-metrics-included.csv
+      cp etc/default-counters.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/default-counters.csv
+      cp etc/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/dcp-metrics-included.csv
     # override prime to set version
     override-prime: |
       craftctl default
@@ -79,3 +80,7 @@ parts:
 
       # Set the Snap version to the same as dcgm deb file
       craftctl set version="${DCGM_VERSION#1:}"
+
+layout:
+  /etc/dcgm-exporter:
+    symlink: $SNAP/etc/dcgm-exporter

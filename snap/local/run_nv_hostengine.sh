@@ -1,15 +1,14 @@
 #!/bin/bash
+set -euo pipefail
 
 # Build the argument list for the nv-hostengine command
 args=()
 
-# Function to add options if they are set
-add_option() {
-    key=$1
-    value="$(snapctl get "$key")"
-    [ -n "$value" ] && args+=("-p" "$value")
-}
+# Add the nv-hostengine-port option if it is set
+nv_hostengine_port="$(snapctl get nv-hostengine-port)"
 
-add_option nv-hostengine-port
+if [ -n "$nv_hostengine_port" ]; then
+    args+=("-p" "$nv_hostengine_port")
+fi
 
 exec "$SNAP/usr/bin/nv-hostengine" -n --service-account nvidia-dcgm "${args[@]}"

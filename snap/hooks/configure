@@ -3,5 +3,5 @@
 # Set default for DCGM_PORT if not already set
 port_value="$(snapctl get nv-hostengine-port)"
 if [ -z "$port_value" ]; then
-    snapctl set nv-hostengine-port=8888
+    snapctl set nv-hostengine-port=5555
 fi
