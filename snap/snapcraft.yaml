@@ -32,6 +32,7 @@ apps:
   dcgmi:
     command: usr/bin/dcgmi
     plugs:
+      - network-bind
       - opengl
   nv-hostengine:
     command: run_nv_hostengine.sh
