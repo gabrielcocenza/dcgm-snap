@@ -1,4 +1,6 @@
 #!/bin/sh -e
 
-port_value="$(snapctl get nv-hostengine-port)"
-snapctl set nv-hostengine-port=$port_value
+# Register config options if unset,
+# so users can see available options by running
+# `sudo snap get dcgm`.
+[ -z "$(snapctl get nv-hostengine-port)" ] && snapctl set nv-hostengine-port=
