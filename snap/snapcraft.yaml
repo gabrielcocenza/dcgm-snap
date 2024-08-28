@@ -1,0 +1,86 @@
+name: dcgm
+base: core24
+adopt-info: dcgm-exporter
+summary: Snap for NVIDIA DCGM and DCGM exporter
+license: Apache-2.0
+contact: solutions-engineering@lists.canonical.com
+description: |
+  This snap includes NVIDIA DCGM and DCGM exporter to provide GPU monitoring via Prometheus metrics.
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+grade: stable
+confinement: strict
+source-code: https://github.com/canonical/dcgm-snap
+issues: https://github.com/canonical/dcgm-snap/issues
+title: NVIDIA DCGM
+
+package-repositories:
+  - type: apt
+    path: /
+    formats: [deb]
+    key-id: EB693B3035CD5710E231E123A4B469963BF863CC
+    url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64
+
+apps:
+  dcgm-exporter:
+    command: bin/dcgm-exporter
+    plugs:
+      - network-bind
+      - opengl
+  dcgmi:
+    command: usr/bin/dcgmi
+    plugs:
+      - network-bind
+      - opengl
+  nv-hostengine:
+    command: run_nv_hostengine.sh
+    plugs:
+      - network-bind
+      - opengl
+    daemon: simple
+    restart-condition: on-abort
+    environment:
+      DCGM_HOME_DIR: "${SNAP_COMMON}"
+  dcgmproftester10:
+    command: usr/bin/dcgmproftester10
+  dcgmproftester11:
+    command: usr/bin/dcgmproftester11
+  dcgmproftester12:
+    command: usr/bin/dcgmproftester12
+
+parts:
+  wrapper:
+    plugin: dump
+    source: snap/local
+    override-build: |
+      craftctl default
+      chmod +x run_nv_hostengine.sh
+  dcgm-exporter:
+    plugin: go
+    stage-packages: [datacenter-gpu-manager]
+    build-snaps:
+      - go
+    source: https://github.com/NVIDIA/dcgm-exporter.git
+    source-type: git
+    # override build to set custom csv file
+    override-build: |
+      craftctl default
+      mkdir -p $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter
+      cp etc/default-counters.csv etc/dcp-metrics-included.csv $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter/
+    # override prime to set version
+    override-prime: |
+      craftctl default
+      # Locate dcgm .deb file
+      DEB_FILE=$(ls $HOME/parts/dcgm-exporter/stage_packages/datacenter-gpu-manager_*.deb)
+
+      # Extract the version from the .deb file
+      DCGM_VERSION=$(dpkg-deb -f "$DEB_FILE" Version)
+
+      # Set the Snap version to the same as dcgm deb file
+      craftctl set version="${DCGM_VERSION#1:}"
+
+layout:
+  /etc/dcgm-exporter:
+    symlink: $SNAP/etc/dcgm-exporter

@@ -1,0 +1,25 @@
+# This is a template `.gitignore` file for snaps
+
+# Tests files and dir
+reports/
+**/report/
+
+# Log files
+*.log
+
+# IDEs
+.idea/
+.vscode/
+
+# vi
+.*.swp
+
+# version data
+repo-info
+
+# Snaps
+*.snap
+
+# Builds
+.build/
+build/
