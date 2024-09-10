@@ -59,11 +59,12 @@ parts:
       chmod +x run_nv_hostengine.sh
   dcgm-exporter:
     plugin: go
-    stage-packages: [datacenter-gpu-manager]
+    stage-packages: [datacenter-gpu-manager=1:3.3.7]
     build-snaps:
       - go
     source: https://github.com/NVIDIA/dcgm-exporter.git
     source-type: git
+    source-tag: 3.3.7-3.5.0
     # override build to set custom csv file
     override-build: |
       craftctl default
