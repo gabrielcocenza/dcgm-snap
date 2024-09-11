@@ -46,21 +46,19 @@ apps:
 parts:
   wrapper:
     plugin: dump
-    source: snap/local
-    override-build: |
-      craftctl default
-      chmod +x run_nv_hostengine.sh
-  configure-sources:
-    plugin: dump
-    source: snap/local
     build-packages:
       - wget
       - dpkg
-    override-build: |
+    source: snap/local
+    override-pull: |
+      craftctl default
       ./configure_sources.sh
+    override-build: |
+      craftctl default
+      chmod +x run_nv_hostengine.sh
   dcgm-exporter:
     after:
-      - configure-sources
+      - wrapper
     plugin: go
     stage-packages: [datacenter-gpu-manager=1:3.3.7]
     build-snaps:
