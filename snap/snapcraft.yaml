@@ -51,7 +51,7 @@ parts:
       - dpkg
     source: snap/local
     override-pull: |
-      snapcraftctl pull
+      craftctl default
       ./configure_sources.sh
     override-build: |
       craftctl default
