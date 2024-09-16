@@ -1,8 +1,19 @@
 # This is a template `.gitignore` file for snaps
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Tests files and dir
+.pytest_cache/
+.coverage
+.tox
+.venv
 reports/
 **/report/
+htmlcov/
+.mypy_cache
 
 # Log files
 *.log
@@ -16,6 +27,11 @@ reports/
 
 # version data
 repo-info
+
+# Python builds
+deb_dist/
+dist/
+*.egg-info/
 
 # Snaps
 *.snap

@@ -21,10 +21,15 @@ title: NVIDIA DCGM
 
 apps:
   dcgm-exporter:
-    command: bin/dcgm-exporter
+    command: run_dcgm_exporter.sh
     plugs:
       - network-bind
       - opengl
+    daemon: simple
+    # As this is a dcgm snap, not the dcgm-exporter snap,
+    # user might not be interested in running dcgm-exporter, so disable it by default
+    install-mode: disable
+    restart-condition: on-failure
   dcgmi:
     command: usr/bin/dcgmi
     plugs:
@@ -59,6 +64,7 @@ parts:
     override-build: |
       craftctl default
       chmod +x run_nv_hostengine.sh
+      chmod +x run_dcgm_exporter.sh
   dcgm-exporter:
     after:
       - wrapper
