@@ -27,21 +27,34 @@ jobs:
         with:
           fetch-depth: 0  # Complete git history is required to generate the version from git tags.
 
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y yamllint
+          python -m pip install --upgrade pip
+          # pin tox to the current major version to avoid
+          # workflows breaking all at once when a new major version is released.
+          python -m pip install 'tox<5'
 
       - name: Lint yaml files
-        run: |
-          yamllint .yamllint snap/snapcraft.yaml
+        run: yamllint .yamllint snap/snapcraft.yaml
+
+      - name: Lint tests
+        run: tox -e lint
 
   build:
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [[ubuntu-22.04], [self-hosted, ARM64]]
+        runs-on: [[ubuntu-22.04], [self-hosted, jammy, ARM64]]
+    needs:
+      - lint
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,3 +62,40 @@ jobs:
 
       - name: Verify snap builds successfully
         uses: snapcore/action-build@v1
+
+      - name: Upload the built snap
+        uses: actions/upload-artifact@v4
+        with:
+          name: SNAP_FILE
+          path: dcgm*.snap
+
+  func:
+    needs:
+      - build
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [[ubuntu-22.04], [self-hosted, jammy, ARM64]]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Complete git history is required to generate the version from git tags.
+
+      - name: Download the built snap
+        uses: actions/download-artifact@v4
+        with:
+          name: SNAP_FILE
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'tox<5'
+
+      - name: Run unit tests
+        run: tox -e func
