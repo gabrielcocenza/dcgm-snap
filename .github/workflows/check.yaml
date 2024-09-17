@@ -63,10 +63,13 @@ jobs:
       - name: Verify snap builds successfully
         uses: snapcore/action-build@v1
 
+      - name: Determine system architecture
+        run: echo "SYSTEM_ARCH=$(uname -m)" >> $GITHUB_ENV
+
       - name: Upload the built snap
         uses: actions/upload-artifact@v4
         with:
-          name: SNAP_FILE
+          name: snap_${{ env.SYSTEM_ARCH }}
           path: dcgm*.snap
 
   func:
@@ -82,10 +85,13 @@ jobs:
         with:
           fetch-depth: 0  # Complete git history is required to generate the version from git tags.
 
+      - name: Determine system architecture
+        run: echo "SYSTEM_ARCH=$(uname -m)" >> $GITHUB_ENV
+
       - name: Download the built snap
         uses: actions/download-artifact@v4
         with:
-          name: SNAP_FILE
+          name: snap_${{ env.SYSTEM_ARCH }}
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
