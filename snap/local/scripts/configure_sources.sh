@@ -18,7 +18,7 @@ fi
 
 
 echo "Architecture is $SYSTEM_ARCH. Downloading cuda-keyring package..."
-wget "https://developer.download.nvidia.com/compute/cuda/repos/$DISTRIBUTION/$ARCH/$CUDA_PKG"
+curl --remote-name "https://developer.download.nvidia.com/compute/cuda/repos/$DISTRIBUTION/$ARCH/$CUDA_PKG"
 
 # Run the checksum verification and install cuda-keyring if valid
 if echo "$SHA256SUM  $CUDA_PKG" | sha256sum --check --status; then
