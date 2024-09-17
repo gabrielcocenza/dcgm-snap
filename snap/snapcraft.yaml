@@ -5,7 +5,8 @@ summary: Snap for NVIDIA DCGM and DCGM exporter
 license: Apache-2.0
 contact: solutions-engineering@lists.canonical.com
 description: |
-  This snap includes NVIDIA DCGM and DCGM exporter to provide GPU monitoring via Prometheus metrics.
+  This snap includes NVIDIA DCGM and DCGM exporter to provide GPU monitoring via
+  Prometheus metrics. This snap does not include the dcgmproftester.
 platforms:
   amd64:
     build-on: [amd64]
@@ -44,12 +45,6 @@ apps:
     restart-condition: on-abort
     environment:
       DCGM_HOME_DIR: "${SNAP_COMMON}"
-  dcgmproftester10:
-    command: usr/bin/dcgmproftester10
-  dcgmproftester11:
-    command: usr/bin/dcgmproftester11
-  dcgmproftester12:
-    command: usr/bin/dcgmproftester12
 
 parts:
   wrapper:
@@ -91,6 +86,15 @@ parts:
 
       # Set the Snap version to the same as dcgm deb file
       craftctl set version="${DCGM_VERSION#1:}"
+
+  cleanup:
+    after:
+      - dcgm-exporter
+    plugin: nil
+    source: snap/local/scripts
+    override-prime: |
+      craftctl default
+      ./scripts/remove_dcgmproftester.sh
 
 layout:
   /etc/dcgm-exporter:
