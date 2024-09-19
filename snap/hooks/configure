@@ -12,3 +12,9 @@ if [ -z "$(snapctl get dcgm-exporter-address)" ]; then
     # Explictly use default bind address of dcgm-exporter binary
     snapctl set dcgm-exporter-address=":9400"
 fi
+
+if [ -z "$(snapctl get dcgm-exporter-metrics-file)" ]; then
+    # Implicitly use default metrics file of dcgm-exporter binary in $SNAP/etc/dcgm-exporter/default-counters.csv
+    # See details: https://github.com/NVIDIA/dcgm-exporter?tab=readme-ov-file#changing-metrics
+    snapctl set dcgm-exporter-metrics-file=""
+fi

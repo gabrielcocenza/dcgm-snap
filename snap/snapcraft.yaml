@@ -87,7 +87,7 @@ parts:
     source: https://github.com/NVIDIA/dcgm-exporter.git
     source-type: git
     source-tag: 3.3.7-3.5.0
-    # override build to set custom csv file
+    # override build to get the default csv files from the upstream
     override-build: |
       craftctl default
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/dcgm-exporter
