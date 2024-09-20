@@ -5,23 +5,31 @@ import urllib.request
 from contextlib import contextmanager
 
 import pytest
-from tenacity import retry, stop_after_delay, wait_fixed
+from tenacity import Retrying, retry, stop_after_delay, wait_fixed
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_delay(10))
-def _check_service_active(service: str) -> None:
-    """Check if a service is active."""
+def _check_service_active(systemd_service: str) -> None:
+    """Check if a systemd service is active."""
     assert 0 == subprocess.call(
-        f"sudo systemctl is-active --quiet {service}".split()
-    ), f"{service} is not running"
+        f"sudo systemctl is-active --quiet {systemd_service}".split()
+    ), f"{systemd_service} is not running"
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_delay(10))
-def _check_service_failed(service: str) -> None:
-    """Check if a service is in a failed state."""
+def _check_service_inactive(systemd_service: str) -> None:
+    """Check if a systemd service is inactive."""
+    assert 3 == subprocess.call(
+        f"sudo systemctl is-active --quiet {systemd_service}".split()
+    ), f"{systemd_service} is running"
+
+
+@retry(wait=wait_fixed(2), stop=stop_after_delay(10))
+def _check_service_failed(systemd_service: str) -> None:
+    """Check if a systemd service is in a failed state."""
     assert 0 == subprocess.call(
-        f"sudo systemctl is-failed --quiet {service}".split()
-    ), f"{service} is running"
+        f"sudo systemctl is-failed --quiet {systemd_service}".split()
+    ), f"{systemd_service} is running"
 
 
 @retry(wait=wait_fixed(5), stop=stop_after_delay(30))
@@ -67,7 +75,7 @@ class TestDCGMConfigs:
     @classmethod
     @retry(wait=wait_fixed(2), stop=stop_after_delay(10))
     def set_config(cls, service: str, config: str, value: str) -> None:
-        """Set a configuration value for a snap service."""
+        """Set a configuration value for a snap service and restart to apply."""
         assert 0 == subprocess.call(
             f"sudo snap set dcgm {config}={value}".split()
         ), f"Failed to set {config} to {value}"
@@ -104,13 +112,17 @@ class TestDCGMConfigs:
         return str(dcgm_snap_config[config])
 
     @classmethod
+    def get_start_command(cls, program: str) -> str:
+        return subprocess.check_output(f"ps -C {program} -o cmd".split(), text=True)
+
+    @classmethod
     @retry(wait=wait_fixed(2), stop=stop_after_delay(10))
     def check_metric_config(cls, metric_file: str = "") -> None:
         """Check if the metric file is loaded in the dcgm-exporter service.
 
         :param metric_file: The metric file to check for, if empty check if nothing is loaded
         """
-        result = subprocess.check_output("ps -C dcgm-exporter -o cmd".split(), text=True)
+        result = cls.get_start_command("dcgm-exporter")
 
         if metric_file:
             assert f"-f {metric_file}" in result, f"Metric file {metric_file} is not loaded"
@@ -126,7 +138,7 @@ class TestDCGMConfigs:
             yield
         finally:
             # Revert back
-            self.set_config(service, config, old_value)
+            self.unset_config(service, config)
             self.check_bind_config(service, old_value)
 
     @pytest.mark.parametrize(
@@ -225,3 +237,45 @@ class TestDCGMConfigs:
         self.set_config(self.service, self.config, metric_file)
         self.check_metric_config(metric_file_path)
         _check_endpoint(self.endpoint)
+
+    @classmethod
+    @pytest.fixture
+    def dependency_setup(cls):
+        cls.nv_hostengine_port_config = "nv-hostengine-port"
+        cls.nv_hostengine_service = "dcgm.nv-hostengine"
+        cls.dcgm_exporter_service = "dcgm.dcgm-exporter"
+
+        old_value = cls.get_config(cls.nv_hostengine_port_config)
+
+        yield
+
+        # Revert back
+        cls.unset_config(cls.nv_hostengine_service, cls.nv_hostengine_port_config)
+        cls.check_bind_config(cls.nv_hostengine_service, old_value)
+        subprocess.check_call(f"sudo snap start {cls.dcgm_exporter_service}".split())
+
+    @pytest.mark.usefixtures("dependency_setup")
+    def test_bind_config_restart_policy(self):
+        """Test the restart policy of the dcgm-exporter service if the nv-hostengine port changes.
+
+        The nv-hostengine will not restart if the dcgm-exporter is inactive.
+        """
+        subprocess.check_call(f"sudo snap stop {self.dcgm_exporter_service}".split())
+        self.set_config(self.nv_hostengine_service, self.nv_hostengine_port_config, "5566")
+        _check_service_inactive(f"snap.{self.dcgm_exporter_service}")
+
+    @pytest.mark.usefixtures("dependency_setup")
+    def test_bind_config_dependency(self):
+        """Test the dependency between the dcgm-exporter and nv-hostengine services."""
+        nv_hostengine_port_config = "nv-hostengine-port"
+        nv_hostengine_service = "dcgm.nv-hostengine"
+        new_value = "5588"
+
+        self.set_config(nv_hostengine_service, nv_hostengine_port_config, new_value)
+
+        for attempt in Retrying(wait=wait_fixed(2), stop=stop_after_delay(10)):
+            with attempt:
+                assert f"-r localhost:{new_value}" in self.get_start_command(
+                    "dcgm-exporter"
+                ), "dcgm-exporter service didn't consume the new port"
+                _check_endpoint("http://localhost:9400/metrics")
