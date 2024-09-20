@@ -1,12 +1,88 @@
 name: dcgm
 base: core24
 adopt-info: dcgm
-summary: Snap for NVIDIA DCGM and DCGM exporter
+summary: Snap for NVIDIA DCGM and DCGM-Exporter
 license: Apache-2.0
 contact: solutions-engineering@lists.canonical.com
 description: |
-  This snap includes NVIDIA DCGM and DCGM exporter to provide GPU monitoring via
-  Prometheus metrics. This snap does not include the dcgmproftester.
+  This snap includes NVIDIA DCGM and DCGM-Exporter to manage and monitor NVIDIA GPUs via the CLI or via Prometheus metrics.
+  Grafana dashboards can then be used to visualize the exported metrics, see for example:
+  https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/
+
+  The snap includes the following components:
+  - DCGM: Data Center GPU Manager
+  - DCGM-Exporter: a Prometheus exporter for DCGM metrics
+
+  Please see the links at the bottom of the page for more details about the included components and their purpose.
+
+  **How-To**
+  ---
+
+  **How to install the snap:**
+
+  ```
+  sudo snap install dcgm
+  ```
+
+  **How to enable metrics collection:**
+
+  ```
+  # Start the DCGM-Exporter service (disabled by default)
+  sudo snap start dcgm.dcgm-exporter
+
+  # Get the metrics
+  curl -s localhost:9400/metrics
+  ```
+
+  **How to configure the snap services:**
+
+  The DCGM snap provides several configuration options that can be customized through the `snap` CLI.
+  For example:
+
+  ```
+  # Get all the configuration options
+  sudo snap get dcgm
+
+  # Set the NV-Hostengine port
+  sudo snap set dcgm nv-hostengine-port=5577
+
+  # Restart the NV-Hostengine service to apply the changes
+  sudo snap restart dcgm.nv-hostengine
+  ```
+
+  **Reference**
+  ---
+
+  Available configurations options:
+
+  - `nv-hostengine-port`: the port on which the NV-Hostengine listens.
+    The default is `5555`.
+  - `dcgm-exporter-address`: the address DCGM-Exporter binds to.
+    The default is `:9400`.
+  - `dcgm-exporter-metrics-file`: the name of a custom CSV metrics file to be loaded by the exporter.
+    The path is assumed to be `/var/snap/dcgm/common/`.
+    The default metrics are located in `/snap/dcgm/current/etc/dcgm-exporter/default-counters.csv`.
+    Please refer to the DCGM-Exporter repository link at the bottom of the page for more information on the CSV file format.
+
+  **Limitations**
+  ---
+
+  The DCGM snap does not currently include the performance testing tool `dcgmproftester` in order to limit the size of the snap.
+
+  **Links**
+  ---
+  Upstream DCGM-Exporter repository
+  https://github.com/NVIDIA/dcgm-exporter
+
+  Upstream DCGM repository
+  https://github.com/NVIDIA/DCGM
+
+  DCGM Documentation
+  https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/index.html
+
+  Available NVIDIA GPU metrics
+  https://docs.nvidia.com/datacenter/dcgm/latest/dcgm-api/dcgm-api-field-ids.html
+
 platforms:
   amd64:
     build-on: [amd64]

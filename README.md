@@ -10,3 +10,13 @@ You can build the snap locally by using the command:
 ```shell
 snapcraft --use-lxd
 ```
+
+## Test
+
+You can test the snap locally by using the command:
+
+```shell
+tox -e func
+```
+
+User documentation can be found on the [snap page](https://snapcraft.io/dcgm).
