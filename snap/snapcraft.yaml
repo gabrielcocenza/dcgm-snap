@@ -32,7 +32,7 @@ description: |
 
   **How to configure the snap services:**
 
-  The DCGM snap provides several configuration options that can be customized through the `snap` CLI.\
+  The NV-Hostengine and DCGM-Exporter services can be configured via the `snap` CLI.\
   For example:
 
      # Get all the configuration options
