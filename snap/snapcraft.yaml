@@ -6,7 +6,7 @@ license: Apache-2.0
 contact: solutions-engineering@lists.canonical.com
 description: |
   This snap includes NVIDIA DCGM and DCGM-Exporter to manage and monitor NVIDIA GPUs via the CLI or via Prometheus metrics.
-  Grafana dashboards can then be used to visualize the exported metrics, see for example:
+  Grafana dashboards can then be used to visualize the exported metrics, see for example:\
   https://grafana.com/grafana/dashboards/12239-nvidia-dcgm-exporter-dashboard/
 
   The snap includes the following components:
@@ -20,35 +20,29 @@ description: |
 
   **How to install the snap:**
 
-  ```
-  sudo snap install dcgm
-  ```
+     sudo snap install dcgm
 
   **How to enable metrics collection:**
 
-  ```
-  # Start the DCGM-Exporter service (disabled by default)
-  sudo snap start dcgm.dcgm-exporter
+     # Start the DCGM-Exporter service (disabled by default)
+     sudo snap start dcgm.dcgm-exporter
 
-  # Get the metrics
-  curl -s localhost:9400/metrics
-  ```
+     # Get the metrics
+     curl -s localhost:9400/metrics
 
   **How to configure the snap services:**
 
-  The DCGM snap provides several configuration options that can be customized through the `snap` CLI.
+  The DCGM snap provides several configuration options that can be customized through the `snap` CLI.\
   For example:
 
-  ```
-  # Get all the configuration options
-  sudo snap get dcgm
+     # Get all the configuration options
+     sudo snap get dcgm
 
-  # Set the NV-Hostengine port
-  sudo snap set dcgm nv-hostengine-port=5577
+     # Set the NV-Hostengine port
+     sudo snap set dcgm nv-hostengine-port=5577
 
-  # Restart the NV-Hostengine service to apply the changes
-  sudo snap restart dcgm.nv-hostengine
-  ```
+     # Restart the NV-Hostengine service to apply the changes
+     sudo snap restart dcgm.nv-hostengine
 
   **Reference**
   ---
@@ -71,16 +65,16 @@ description: |
 
   **Links**
   ---
-  Upstream DCGM-Exporter repository
+  Upstream DCGM-Exporter repository\
   https://github.com/NVIDIA/dcgm-exporter
 
-  Upstream DCGM repository
+  Upstream DCGM repository\
   https://github.com/NVIDIA/DCGM
 
-  DCGM Documentation
+  DCGM Documentation\
   https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/index.html
 
-  Available NVIDIA GPU metrics
+  Available NVIDIA GPU metrics\
   https://docs.nvidia.com/datacenter/dcgm/latest/dcgm-api/dcgm-api-field-ids.html
 
 platforms:
